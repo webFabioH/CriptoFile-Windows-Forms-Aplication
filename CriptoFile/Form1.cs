@@ -16,5 +16,35 @@ namespace CriptoFile
         {
             InitializeComponent();
         }
+
+        private void buttonEncryptFile_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonDecryptFile_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonCreateAsmKeys_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonExportPublicKey_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonImportPublicKey_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonGetPrivateKey_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
