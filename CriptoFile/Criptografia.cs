@@ -175,5 +175,88 @@ namespace CriptoFile
 
             return result;
         }
+    
+        //Metodo para criptografar arquivo
+        public static string EncryptFile(string inFile)
+        {
+            //Criar uma instancia de Aes para criptografia simétrica dos dados
+            Aes aes = Aes.Create();
+            ICryptoTransform transform = aes.CreateEncryptor();
+
+            //Usar o RSACryptoServiceProvider para criptografar a chave AES
+            //O rsa é instaciado anteriormente: rsa = new RSACryptoServiceProvide(cspp)
+            byte[] keyEncrypted = rsa.Encrypt(aes.Key, false);
+
+            //Criar matrizes de bytes para conter os valores do comprimento da chave e IV.
+            byte[] lenK = new byte[4];
+            byte[] lenIV = new byte[4];
+
+            int lKey = keyEncrypted.Length;
+            lenK = BitConverter.GetBytes(lKey);
+            int lIV = aes.IV.Length;
+            lenIV = BitConverter.GetBytes(lIV);
+
+            //Escrever no FileStream para arquivo criptografado
+            // - comprimento de chave
+            // - comprimento do IV
+            // - chave criptografada
+            // - O IV
+            // - conteúdo da cifra criptografada
+
+            int startFileName = inFile.LastIndexOf("\\") + 1;
+            string outFile = Encrfolder + inFile.Substring(startFileName) + ".enc";
+
+            try
+            {
+                using (FileStream outfs = new FileStream(outFile, FileMode.Create))
+                {
+                    outfs.Write(lenK, 0, 4);
+                    outfs.Write(lenIV, 0, 4);
+                    outfs.Write(keyEncrypted, 0, lKey);
+                    outfs.Write(aes.IV, 0, lIV);
+
+                    //Escreve o texto cifrado usando o CryptoStream para criptografar
+                    using (CryptoStream outStreamEncrypted = new CryptoStream(outfs, transform, CryptoStreamMode.Write))
+                    {
+                        //Criptografando em partes é possível economizar memória
+                        int count = 0;
+                        int offset = 0;
+
+                        //blockSizeBytes pode ter qualquer tamanho arbitrário
+                        int blockSizeBytes = aes.BlockSize / 8;
+                        byte[] data = new byte[blockSizeBytes];
+                        int byteRead = 0;
+
+                        using (FileStream infs = new FileStream(inFile, FileMode.Open))
+                        {
+                            do
+                            {
+                                count = infs.Read(data, 0, blockSizeBytes);
+                                offset += count;
+                                outStreamEncrypted.Write(data, 0, count);
+                                byteRead += blockSizeBytes;
+                            } while (count > 0);
+
+                            infs.Close();
+                        }
+
+                        outStreamEncrypted.FlushFinalBlock();
+                        outStreamEncrypted.Close();
+                    }
+
+                    outfs.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return $"Arquivo criptografado.\n" + 
+                $"Origem: {inFile}\n" + 
+                $"Destino: {outFile}"; 
+        }
+
+        //Metodo para descriptografar arquivo
     }
 }
