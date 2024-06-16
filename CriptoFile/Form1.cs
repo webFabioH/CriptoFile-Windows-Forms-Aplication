@@ -60,7 +60,7 @@ namespace CriptoFile
             {
                 //Mostra caixa de dialogo para escoher arquivo
                 OpenFileDialog dialog = new OpenFileDialog();
-                dialog.InitialDirectory = Criptografia.SrcFolder;
+                dialog.InitialDirectory = Criptografia.Encrfolder;
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     string fName = dialog.FileName;
@@ -78,7 +78,7 @@ namespace CriptoFile
             if (string.IsNullOrEmpty(txtKey.Text))
             {
                 label1.ForeColor = Color.Red;
-                label1.Text = "Insira um vaalor para definir a chave pública"; 
+                label1.Text = "Insira um valor para definir a chave pública"; 
                 txtKey.Focus();
                 return;
             }

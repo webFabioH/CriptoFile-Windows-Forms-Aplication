@@ -245,6 +245,7 @@ namespace CriptoFile
                     }
 
                     outfs.Close();
+                    File.Delete(inFile);
                 }
             }
             catch (Exception ex)
@@ -326,7 +327,7 @@ namespace CriptoFile
                         {
                             do
                             {
-                                count = infs.Read(data, offset, blockSizeBytes);
+                                count = infs.Read(data, 0, blockSizeBytes);
                                 offset += count;
                                 outStremDecrypted.Write(data, 0, count);
                             } while (count > 0);
